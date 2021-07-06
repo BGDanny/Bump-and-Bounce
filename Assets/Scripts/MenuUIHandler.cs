@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class MenuUIHandler : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject startMenu;
+    public GameObject background;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,4 +18,12 @@ public class MenuUIHandler : MonoBehaviour
     {
 
     }
+
+    public void StartGame()
+    {
+        Time.timeScale = 1;
+        startMenu.SetActive(false);
+        background.SetActive(false);
+    }
+
 }
