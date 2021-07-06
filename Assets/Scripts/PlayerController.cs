@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
     public GameObject rocketPrefab;
     private GameObject tmpRocket;
     private Coroutine powerupCountdown;
+    private AudioSource gameOverSong;
+    private MenuUIHandler menu;
     public float hangTime;
     public float smashSpeed;
     public float explosionForce;
@@ -24,6 +26,8 @@ public class PlayerController : MonoBehaviour
     {
         playerRb = GetComponent<Rigidbody>();
         focalPoint = GameObject.Find("Focal Point");
+        gameOverSong = focalPoint.GetComponent<AudioSource>();
+        menu = GameObject.Find("Canvas").GetComponent<MenuUIHandler>();
     }
 
     // Update is called once per frame
@@ -31,6 +35,8 @@ public class PlayerController : MonoBehaviour
     {
         float forwardInput = Input.GetAxis("Vertical");
         playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed);
+        float horizontalInput = Input.GetAxis("Horizontal");
+        playerRb.AddForce(focalPoint.transform.right * horizontalInput * speed);
         powerupIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
         if (currentPowerUp == PowerUpType.Rockets && Input.GetKeyDown(KeyCode.F))
         {
@@ -40,6 +46,11 @@ public class PlayerController : MonoBehaviour
         {
             smashing = true;
             StartCoroutine(Smash());
+        }
+        if (transform.position.y < -10 && !GameManager.instance.isGameOver)
+        {
+            menu.EndGame();
+            gameOverSong.Play();
         }
     }
     private void OnTriggerEnter(Collider other)

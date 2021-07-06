@@ -23,7 +23,7 @@ public class SpawnManager : MonoBehaviour
     void Update()
     {
         enemyCount = FindObjectsOfType<Enemy>().Length;
-        if (enemyCount == 0)
+        if (enemyCount == 0 && !GameManager.instance.isGameOver)
         {
             waveNumber++;
             if (waveNumber % bossRound == 0)
