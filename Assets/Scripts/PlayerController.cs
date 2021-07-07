@@ -2,9 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//FIXME Player gravity
+//TODO rolling sound; score display; start countdown; powerup indicator color; control menu; powerup spawn
+
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 5.0f;
+    [SerializeField]
+    private float speed = 15.0f;
     private GameObject focalPoint;
     private Rigidbody playerRb;
     public bool hasPowerup = false;
@@ -83,7 +87,6 @@ public class PlayerController : MonoBehaviour
             Rigidbody enemyRigidbody = other.gameObject.GetComponent<Rigidbody>();
             Vector3 awayFromPlayer = other.gameObject.transform.position - transform.position;
             enemyRigidbody.AddForce(awayFromPlayer * 10, ForceMode.Impulse);
-            Debug.Log("Player collided with: " + other.gameObject.name + " withpowerup set to " + currentPowerUp.ToString());
         }
     }
     void LaunchRockets()

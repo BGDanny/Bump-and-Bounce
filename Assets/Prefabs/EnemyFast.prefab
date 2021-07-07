@@ -126,3 +126,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 6
+  isBoss: 0
+  spawnInterval: 0
+  miniEnemySpawnCount: 0

@@ -32,9 +32,12 @@ public class Enemy : MonoBehaviour
                 spawnManager.SpawnMiniEnemy(miniEnemySpawnCount);
             }
         }
-        if (transform.position.y < -10)
+        if (transform.position.y < -2)
         {
             Destroy(gameObject);
+
         }
+
     }
+
 }

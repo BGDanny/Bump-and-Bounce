@@ -6,11 +6,17 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance { get; private set; }
     public bool isGameOver;
+    public int bestScore;
     // Start is called before the first frame update
     void Start()
     {
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         instance = this;
-        isGameOver = false;
+        DontDestroyOnLoad(gameObject);
     }
 
     // Update is called once per frame
