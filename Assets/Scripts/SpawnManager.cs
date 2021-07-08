@@ -17,6 +17,7 @@ public class SpawnManager : MonoBehaviour
     {
         int randomPowerup = Random.Range(0, powerupPrefab.Length);
         Instantiate(powerupPrefab[randomPowerup], GenerateSpawnPosition(), powerupPrefab[randomPowerup].transform.rotation);
+        GameManager.instance.powerupAvailable = true;
         SpawnEnemyWave(waveNumber);
         menu.GetComponent<MenuUIHandler>();
     }
@@ -37,8 +38,13 @@ public class SpawnManager : MonoBehaviour
             {
                 SpawnEnemyWave(waveNumber);
             }
+
+        }
+        if (!GameManager.instance.powerupAvailable)
+        {
             int randomPowerup = Random.Range(0, powerupPrefab.Length);
-            Instantiate(powerupPrefab[randomPowerup], GenerateSpawnPosition(), powerupPrefab[randomPowerup].transform.rotation);
+            Instantiate(powerupPrefab[randomPowerup], GeneratePowerupPosition(), powerupPrefab[randomPowerup].transform.rotation);
+            GameManager.instance.powerupAvailable = true;
         }
 
 
@@ -56,6 +62,14 @@ public class SpawnManager : MonoBehaviour
     {
         float spawnPosX = Random.Range(-9, 9);
         float spawnPosZ = Random.Range(-9, 9);
+        Vector3 randomPos = new Vector3(spawnPosX, 0, spawnPosZ);
+        return randomPos;
+    }
+
+    private Vector3 GeneratePowerupPosition()
+    {
+        float spawnPosX = Random.Range(-5, 5);
+        float spawnPosZ = Random.Range(-5, 5);
         Vector3 randomPos = new Vector3(spawnPosX, 0, spawnPosZ);
         return randomPos;
     }

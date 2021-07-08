@@ -21,6 +21,10 @@ public class RocketBehaviour : MonoBehaviour
             transform.position += moveDirection * speed * Time.deltaTime;
             transform.LookAt(target);
         }
+        if (target == null)
+        {
+            Destroy(gameObject);
+        }
     }
     public void Fire(Transform newTarget)
     {

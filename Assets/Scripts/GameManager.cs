@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance { get; private set; }
     public bool isGameOver;
     public int bestScore;
+    public bool powerupAvailable;
     // Start is called before the first frame update
     void Start()
     {

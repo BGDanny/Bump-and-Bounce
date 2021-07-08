@@ -11,7 +11,6 @@ public class PlayerController : MonoBehaviour
     private float speed = 15.0f;
     private GameObject focalPoint;
     private Rigidbody playerRb;
-    public bool hasPowerup = false;
     public GameObject powerupIndicator;
     public PowerUpType currentPowerUp = PowerUpType.None;
     public GameObject rocketPrefab;
@@ -27,6 +26,8 @@ public class PlayerController : MonoBehaviour
     float floorY;
     private bool isSoundPlaying = false;
     private AudioSource[] soundEffect;
+    private float nextRocketTime;
+    private float nextSmashTime;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,19 +39,15 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        Debug.Log(speed);
-        float forwardInput = Input.GetAxis("Vertical");
-        playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed);
-        float horizontalInput = Input.GetAxis("Horizontal");
-        playerRb.AddForce(focalPoint.transform.right * horizontalInput * speed);
         powerupIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
-        if (currentPowerUp == PowerUpType.Rockets && Input.GetKeyDown(KeyCode.F))
+        if (currentPowerUp == PowerUpType.Rockets && Input.GetKeyDown(KeyCode.Space) && Time.time > nextRocketTime)
         {
             LaunchRockets();
+            nextRocketTime = Time.time + 0.25f;
         }
-        if (currentPowerUp == PowerUpType.Smash && Input.GetKeyDown(KeyCode.Space) && !smashing)
+        if (currentPowerUp == PowerUpType.Smash && Input.GetKeyDown(KeyCode.Space) && !smashing && Time.time > nextSmashTime)
         {
             smashing = true;
             StartCoroutine(Smash());
@@ -78,28 +75,37 @@ public class PlayerController : MonoBehaviour
             isSoundPlaying = false;
         }
     }
+
+    private void FixedUpdate()
+    {
+        float forwardInput = Input.GetAxis("Vertical");
+        playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed);
+        float horizontalInput = Input.GetAxis("Horizontal");
+        playerRb.AddForce(focalPoint.transform.right * horizontalInput * speed);
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Powerup"))
         {
-            hasPowerup = true;
+            // if (powerupCountdown != null)
+            // {
+            //     StopCoroutine(powerupCountdown);
+            // }
             currentPowerUp = other.gameObject.GetComponent<PowerUp>().powerUpType;
             powerupIndicator.SetActive(true);
             Destroy(other.gameObject);
-            StartCoroutine(PowerupCountdownRoutine());
+            powerupCountdown = StartCoroutine(PowerupCountdownRoutine());
         }
-        if (powerupCountdown != null)
-        {
-            StopCoroutine(powerupCountdown);
-        }
-        powerupCountdown = StartCoroutine(PowerupCountdownRoutine());
+
     }
     IEnumerator PowerupCountdownRoutine()
     {
         yield return new WaitForSeconds(7);
-        hasPowerup = false;
         currentPowerUp = PowerUpType.None;
         powerupIndicator.SetActive(false);
+        yield return new WaitForSecondsRealtime(5);
+        GameManager.instance.powerupAvailable = false;
+
     }
     private void OnCollisionEnter(Collision other)
     {
@@ -111,7 +117,6 @@ public class PlayerController : MonoBehaviour
                 Vector3 awayFromPlayer = other.gameObject.transform.position - transform.position;
                 enemyRigidbody.AddForce(awayFromPlayer * 10, ForceMode.Impulse);
             }
-            Debug.Log(other.impulse.magnitude);
             if (other.impulse.magnitude > 5)
             {
                 soundEffect[2].Play();
@@ -150,5 +155,6 @@ public class PlayerController : MonoBehaviour
             }
         }
         smashing = false;
+        nextSmashTime = Time.time + 0.5f;
     }
 }

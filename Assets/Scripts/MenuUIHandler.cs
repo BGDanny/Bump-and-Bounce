@@ -49,7 +49,7 @@ public class MenuUIHandler : MonoBehaviour
         {
             GameManager.instance.bestScore = score;
         }
-        gameoverText.text = $"Stage Cleared: {score}\nPersonal Best: {GameManager.instance.bestScore}";
+        gameoverText.text = $"Stage{(score > 1 ? "s" : "")} Cleared: {score}\nPersonal Best: {GameManager.instance.bestScore}";
     }
 
     public void RestartGame()
