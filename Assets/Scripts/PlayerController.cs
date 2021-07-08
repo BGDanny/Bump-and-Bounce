@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//FIXME Player gravity
-//TODO rolling sound; score display; start countdown; powerup indicator color; control menu; powerup spawn
+//FIXME inconsistent powerup
+//TODO  powerup indicator color; control menu;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     public GameObject rocketPrefab;
     private GameObject tmpRocket;
     private Coroutine powerupCountdown;
-    private AudioSource gameOverSong;
+    private AudioSource[] backgroundMusic;
     private MenuUIHandler menu;
     public float hangTime;
     public float smashSpeed;
@@ -25,18 +25,22 @@ public class PlayerController : MonoBehaviour
     public float explosionRadius;
     bool smashing = false;
     float floorY;
+    private bool isSoundPlaying = false;
+    private AudioSource[] soundEffect;
     // Start is called before the first frame update
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
         focalPoint = GameObject.Find("Focal Point");
-        gameOverSong = focalPoint.GetComponent<AudioSource>();
+        backgroundMusic = focalPoint.GetComponents<AudioSource>();
         menu = GameObject.Find("Canvas").GetComponent<MenuUIHandler>();
+        soundEffect = GetComponents<AudioSource>();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        Debug.Log(speed);
         float forwardInput = Input.GetAxis("Vertical");
         playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed);
         float horizontalInput = Input.GetAxis("Horizontal");
@@ -54,7 +58,24 @@ public class PlayerController : MonoBehaviour
         if (transform.position.y < -10 && !GameManager.instance.isGameOver)
         {
             menu.EndGame();
-            gameOverSong.Play();
+            soundEffect[0].Stop();
+            backgroundMusic[1].Stop();
+            backgroundMusic[0].Play();
+        }
+        if (playerRb.velocity.magnitude > 2 && !isSoundPlaying && !smashing)
+        {
+            soundEffect[0].pitch = 0.4f;
+            soundEffect[0].Play();
+            isSoundPlaying = true;
+        }
+        else if (playerRb.velocity.magnitude > 2 && isSoundPlaying)
+        {
+            soundEffect[0].pitch = playerRb.velocity.magnitude / 5;
+        }
+        if ((playerRb.velocity.magnitude < 2 && isSoundPlaying) || smashing)
+        {
+            soundEffect[0].Stop();
+            isSoundPlaying = false;
         }
     }
     private void OnTriggerEnter(Collider other)
@@ -82,11 +103,19 @@ public class PlayerController : MonoBehaviour
     }
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Enemy") && currentPowerUp == PowerUpType.Pushback)
+        if (other.gameObject.CompareTag("Enemy"))
         {
-            Rigidbody enemyRigidbody = other.gameObject.GetComponent<Rigidbody>();
-            Vector3 awayFromPlayer = other.gameObject.transform.position - transform.position;
-            enemyRigidbody.AddForce(awayFromPlayer * 10, ForceMode.Impulse);
+            if (currentPowerUp == PowerUpType.Pushback)
+            {
+                Rigidbody enemyRigidbody = other.gameObject.GetComponent<Rigidbody>();
+                Vector3 awayFromPlayer = other.gameObject.transform.position - transform.position;
+                enemyRigidbody.AddForce(awayFromPlayer * 10, ForceMode.Impulse);
+            }
+            Debug.Log(other.impulse.magnitude);
+            if (other.impulse.magnitude > 5)
+            {
+                soundEffect[2].Play();
+            }
         }
     }
     void LaunchRockets()
@@ -99,6 +128,7 @@ public class PlayerController : MonoBehaviour
     }
     IEnumerator Smash()
     {
+        soundEffect[1].PlayDelayed(0.25f);
         var enemies = FindObjectsOfType<Enemy>();
         floorY = transform.position.y;
         float jumpTime = Time.time + hangTime;

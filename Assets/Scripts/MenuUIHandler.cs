@@ -11,12 +11,16 @@ public class MenuUIHandler : MonoBehaviour
     [SerializeField]
     private GameObject gameoverMenu;
     public GameObject background;
-    public TextMeshProUGUI waveText;
+    public GameObject gameStats;
     public TextMeshProUGUI gameoverText;
+    private TextMeshProUGUI[] gameStatsText;
+    private int second;
     // Start is called before the first frame update
     void Start()
     {
         Time.timeScale = 0;
+        gameStatsText = gameStats.GetComponentsInChildren<TextMeshProUGUI>();
+        second = 3;
     }
 
     // Update is called once per frame
@@ -27,17 +31,17 @@ public class MenuUIHandler : MonoBehaviour
 
     public void StartGame()
     {
-        Time.timeScale = 1;
+        StartCoroutine(Countdown());
         startMenu.SetActive(false);
         background.SetActive(false);
-        GameManager.instance.isGameOver = false;
-        waveText.gameObject.SetActive(true);
+        gameStats.SetActive(true);
     }
 
     public void EndGame()
     {
         GameManager.instance.isGameOver = true;
         Time.timeScale = 0;
+        gameStats.SetActive(false);
         gameoverMenu.SetActive(true);
         background.SetActive(true);
         int score = --GameObject.Find("SpawnManager").GetComponent<SpawnManager>().waveNumber;
@@ -55,7 +59,22 @@ public class MenuUIHandler : MonoBehaviour
 
     public void UpdateWaveNumber(int waveNumber)
     {
-        waveText.text = "Wave: " + waveNumber;
+        gameStatsText[0].text = "Wave: " + waveNumber;
+    }
+
+    IEnumerator Countdown()
+    {
+        while (second > 0)
+        {
+            gameStatsText[1].text = $"{second}";
+            second--;
+            yield return new WaitForSecondsRealtime(1);
+        }
+        gameStatsText[1].text = "GO";
+        yield return new WaitForSecondsRealtime(0.5f);
+        Time.timeScale = 1;
+        GameManager.instance.isGameOver = false;
+        gameStatsText[1].text = "";
     }
 
 }

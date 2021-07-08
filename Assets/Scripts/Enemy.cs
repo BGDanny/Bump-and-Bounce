@@ -21,9 +21,10 @@ public class Enemy : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         enemyRb.AddForce((player.transform.position - transform.position).normalized * speed);
+        // enemyRb.velocity = ((player.transform.position - transform.position).normalized * speed);
         if (isBoss)
         {
             if (Time.time > nextSpawn)
