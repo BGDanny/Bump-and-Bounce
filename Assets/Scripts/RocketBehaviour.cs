@@ -36,13 +36,16 @@ public class RocketBehaviour : MonoBehaviour
     {
         if (target != null)
         {
+
             if (other.gameObject.CompareTag(target.tag))
             {
                 Rigidbody targetRigidbody = other.gameObject.GetComponent<Rigidbody>();
-                Vector3 away = -other.contacts[0].normal;
+                Vector3 away = -other.GetContact(0).normal;
                 targetRigidbody.AddForce(away * rocketStrength, ForceMode.Impulse);
                 Destroy(gameObject);
             }
         }
     }
+
+
 }

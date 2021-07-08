@@ -2,11 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//FIXME fix boss spawn inconsistency
-//TODO   
-
-public class PlayerController : MonoBehaviour
+public class BasicControl : MonoBehaviour
 {
+
     [SerializeField]
     private float speed = 15.0f;
     private GameObject focalPoint;
@@ -16,16 +14,12 @@ public class PlayerController : MonoBehaviour
     public GameObject rocketPrefab;
     private GameObject tmpRocket;
     private Coroutine powerupCountdown;
-    private AudioSource[] backgroundMusic;
-    private MenuUIHandler menu;
     public float hangTime;
     public float smashSpeed;
     public float explosionForce;
     public float explosionRadius;
     bool smashing = false;
     float floorY;
-    private bool isSoundPlaying = false;
-    private AudioSource[] soundEffect;
     private float nextRocketTime;
     private float nextSmashTime;
     public Material[] powerupMaterials;
@@ -34,9 +28,6 @@ public class PlayerController : MonoBehaviour
     {
         playerRb = GetComponent<Rigidbody>();
         focalPoint = GameObject.Find("Focal Point");
-        backgroundMusic = focalPoint.GetComponents<AudioSource>();
-        menu = GameObject.Find("Canvas").GetComponent<MenuUIHandler>();
-        soundEffect = GetComponents<AudioSource>();
     }
 
     // Update is called once per frame
@@ -53,7 +44,12 @@ public class PlayerController : MonoBehaviour
             smashing = true;
             StartCoroutine(Smash());
         }
-        if (transform.position.y < -10 && !GameManager.instance.isGameOver)
+        if (transform.position.y < -10)
+        {
+            playerRb.Sleep();
+            transform.position = new Vector3(0, 0, 0);
+        }
+        /* if (transform.position.y < -10 && !GameManager.instance.isGameOver)
         {
             menu.EndGame();
             soundEffect[0].Stop();
@@ -74,7 +70,7 @@ public class PlayerController : MonoBehaviour
         {
             soundEffect[0].Stop();
             isSoundPlaying = false;
-        }
+        } */
     }
 
     private void FixedUpdate()
@@ -101,26 +97,21 @@ public class PlayerController : MonoBehaviour
             {
                 powerupIndicator.GetComponent<MeshRenderer>().material = powerupMaterials[0];
             }
-            else
-            {
-                powerupIndicator.GetComponent<MeshRenderer>().material = powerupMaterials[2];
-
-            }
             powerupIndicator.SetActive(true);
             Destroy(other.gameObject);
-            powerupCountdown = StartCoroutine(PowerupCountdownRoutine());
+            // powerupCountdown = StartCoroutine(PowerupCountdownRoutine());
         }
 
     }
-    IEnumerator PowerupCountdownRoutine()
-    {
-        yield return new WaitForSeconds(7);
-        currentPowerUp = PowerUpType.None;
-        powerupIndicator.SetActive(false);
-        yield return new WaitForSecondsRealtime(5);
-        GameManager.instance.powerupAvailable = false;
+    // IEnumerator PowerupCountdownRoutine()
+    // {
+    //     yield return new WaitForSeconds(7);
+    //     currentPowerUp = PowerUpType.None;
+    //     powerupIndicator.SetActive(false);
+    //     yield return new WaitForSecondsRealtime(5);
+    //     GameManager.instance.powerupAvailable = false;
 
-    }
+    // }
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Enemy"))
@@ -131,24 +122,19 @@ public class PlayerController : MonoBehaviour
                 Vector3 awayFromPlayer = other.gameObject.transform.position - transform.position;
                 enemyRigidbody.AddForce(awayFromPlayer * 20, ForceMode.Impulse);
             }
-            if (other.impulse.magnitude > 5)
-            {
-                soundEffect[2].Play();
-            }
         }
     }
     void LaunchRockets()
     {
-        foreach (var enemy in FindObjectsOfType<Enemy>())
+        foreach (var dummy in FindObjectsOfType<Dummy>())
         {
             tmpRocket = Instantiate(rocketPrefab, transform.position + Vector3.up, Quaternion.identity);
-            tmpRocket.GetComponent<RocketBehaviour>().Fire(enemy.transform);
+            tmpRocket.GetComponent<RocketBehaviour>().Fire(dummy.transform);
         }
     }
     IEnumerator Smash()
     {
-        soundEffect[1].PlayDelayed(0.25f);
-        var enemies = FindObjectsOfType<Enemy>();
+        var enemies = FindObjectsOfType<Dummy>();
         floorY = transform.position.y;
         float jumpTime = Time.time + hangTime;
         while (Time.time < jumpTime)

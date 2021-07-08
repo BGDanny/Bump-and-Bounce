@@ -77,4 +77,9 @@ public class MenuUIHandler : MonoBehaviour
         gameStatsText[1].text = "";
     }
 
+    public void StartTutorial()
+    {
+        SceneManager.LoadScene("Controls");
+    }
+
 }
