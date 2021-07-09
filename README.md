@@ -1,0 +1,1 @@
+Minigame published at [https://play.unity.com/mg/other/webgl-builds-72970](https://play.unity.com/mg/other/webgl-builds-72970)
