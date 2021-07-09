@@ -2564,8 +2564,8 @@ MonoBehaviour:
   currentPowerUp: 0
   rocketPrefab: {fileID: 7374519243725142006, guid: 918869202db1a8740a36165794e0a116, type: 3}
   hangTime: 0.5
-  smashSpeed: 20
-  explosionForce: 25
+  smashSpeed: 25
+  explosionForce: 30
   explosionRadius: 20
   powerupMaterials:
   - {fileID: 2100000, guid: a9c205891c66b5743bacef8d41ff41aa, type: 2}
