@@ -21,6 +21,7 @@ public class MenuUIHandler : MonoBehaviour
         Time.timeScale = 0;
         gameStatsText = gameStats.GetComponentsInChildren<TextMeshProUGUI>();
         second = 3;
+        GameManager.instance.LoadBestScore();
     }
 
     // Update is called once per frame
@@ -45,10 +46,7 @@ public class MenuUIHandler : MonoBehaviour
         gameoverMenu.SetActive(true);
         background.SetActive(true);
         int score = --GameObject.Find("SpawnManager").GetComponent<SpawnManager>().waveNumber;
-        if (score > GameManager.instance.bestScore)
-        {
-            GameManager.instance.bestScore = score;
-        }
+        GameManager.instance.EvaluateBestScore(score);
         gameoverText.text = $"Stage{(score > 1 ? "s" : "")} Cleared: {score}\nPersonal Best: {GameManager.instance.bestScore}";
     }
 

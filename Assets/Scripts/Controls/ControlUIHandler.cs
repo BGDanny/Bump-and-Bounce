@@ -22,11 +22,11 @@ public class ControlUIHandler : MonoBehaviour
         Time.timeScale = 1;
         controlText = GetComponentInChildren<TextMeshProUGUI>();
         controls.Add("Use Q E to rotate camera");
-        controls.Add("Use W S A D to move");
+        controls.Add("Use W S A D to move and LeftShift to jump");
         controls.Add("Pick up the powerup");
         controls.Add("The yellow powerup allows you to bump into enemies with greater force, now try knock the dummy off");
         controls.Add("The green powerup allows you to launch rockets towards enemies, try press Space");
-        controls.Add("The red powerup allows you to smash the ground and pushing close enemies back, try press Space");
+        controls.Add("The red powerup allows you to smash the ground and push close enemies back, try press Space");
         controls.Add("Remember all powerups have time limits outside this tutorial!");
     }
 

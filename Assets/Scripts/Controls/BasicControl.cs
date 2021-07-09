@@ -23,6 +23,7 @@ public class BasicControl : MonoBehaviour
     private float nextRocketTime;
     private float nextSmashTime;
     public Material[] powerupMaterials;
+    private bool isGrounded = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -49,28 +50,12 @@ public class BasicControl : MonoBehaviour
             playerRb.Sleep();
             transform.position = new Vector3(0, 0, 0);
         }
-        /* if (transform.position.y < -10 && !GameManager.instance.isGameOver)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded)
         {
-            menu.EndGame();
-            soundEffect[0].Stop();
-            backgroundMusic[1].Stop();
-            backgroundMusic[0].Play();
+            playerRb.AddForce(Vector3.up * speed, ForceMode.Impulse);
+            isGrounded = false;
         }
-        if (playerRb.velocity.magnitude > 2 && !isSoundPlaying && !smashing)
-        {
-            soundEffect[0].pitch = 0.4f;
-            soundEffect[0].Play();
-            isSoundPlaying = true;
-        }
-        else if (playerRb.velocity.magnitude > 2 && isSoundPlaying)
-        {
-            soundEffect[0].pitch = playerRb.velocity.magnitude / 5;
-        }
-        if ((playerRb.velocity.magnitude < 2 && isSoundPlaying) || smashing)
-        {
-            soundEffect[0].Stop();
-            isSoundPlaying = false;
-        } */
+
     }
 
     private void FixedUpdate()
@@ -84,10 +69,7 @@ public class BasicControl : MonoBehaviour
     {
         if (other.CompareTag("Powerup"))
         {
-            // if (powerupCountdown != null)
-            // {
-            //     StopCoroutine(powerupCountdown);
-            // }
+
             currentPowerUp = other.gameObject.GetComponent<PowerUp>().powerUpType;
             if (currentPowerUp == PowerUpType.Rockets)
             {
@@ -99,19 +81,10 @@ public class BasicControl : MonoBehaviour
             }
             powerupIndicator.SetActive(true);
             Destroy(other.gameObject);
-            // powerupCountdown = StartCoroutine(PowerupCountdownRoutine());
         }
 
     }
-    // IEnumerator PowerupCountdownRoutine()
-    // {
-    //     yield return new WaitForSeconds(7);
-    //     currentPowerUp = PowerUpType.None;
-    //     powerupIndicator.SetActive(false);
-    //     yield return new WaitForSecondsRealtime(5);
-    //     GameManager.instance.powerupAvailable = false;
 
-    // }
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Enemy"))
@@ -122,6 +95,10 @@ public class BasicControl : MonoBehaviour
                 Vector3 awayFromPlayer = other.gameObject.transform.position - transform.position;
                 enemyRigidbody.AddForce(awayFromPlayer * 20, ForceMode.Impulse);
             }
+        }
+        else if (other.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
         }
     }
     void LaunchRockets()

@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private float nextRocketTime;
     private float nextSmashTime;
     public Material[] powerupMaterials;
+    private bool isGrounded = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -42,6 +43,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded)
+        {
+            playerRb.AddForce(Vector3.up * speed, ForceMode.Impulse);
+            isGrounded = false;
+        }
         powerupIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
         if (currentPowerUp == PowerUpType.Rockets && Input.GetKeyDown(KeyCode.Space) && Time.time > nextRocketTime)
         {
@@ -83,6 +89,8 @@ public class PlayerController : MonoBehaviour
         playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed);
         float horizontalInput = Input.GetAxis("Horizontal");
         playerRb.AddForce(focalPoint.transform.right * horizontalInput * speed);
+
+
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -135,6 +143,10 @@ public class PlayerController : MonoBehaviour
             {
                 soundEffect[2].Play();
             }
+        }
+        else if (other.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
         }
     }
     void LaunchRockets()

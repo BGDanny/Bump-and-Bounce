@@ -78,14 +78,14 @@ public class SpawnManager : MonoBehaviour
         int miniEnemysToSpawn;
         if (bossRound != 0)
         {
-            miniEnemysToSpawn = currentRound / bossRound;
+            miniEnemysToSpawn = currentRound - 1;
         }
         else
         {
             miniEnemysToSpawn = 1;
         }
         var boss = Instantiate(bossPrefab, GenerateSpawnPosition(), bossPrefab.transform.rotation);
-        boss.GetComponent<Enemy>().miniEnemySpawnCount = miniEnemysToSpawn;
+        SpawnMiniEnemy(miniEnemysToSpawn);
     }
     public void SpawnMiniEnemy(int amount)
     {

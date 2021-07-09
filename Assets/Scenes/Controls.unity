@@ -1846,7 +1846,7 @@ MonoBehaviour:
   hangTime: 0.5
   smashSpeed: 20
   explosionForce: 25
-  explosionRadius: 10
+  explosionRadius: 20
   powerupMaterials:
   - {fileID: 2100000, guid: a9c205891c66b5743bacef8d41ff41aa, type: 2}
   - {fileID: 2100000, guid: d6f5dbdd112a53a49ba55ab29f183344, type: 2}
